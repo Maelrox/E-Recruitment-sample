@@ -1,0 +1,198 @@
+<mat-dialog-content fxLayout="row">
+    <!-- Left column for the form -->
+    <div fxFlex="45" class="job-form-container">
+      <h2 mat-dialog-title style="text-align:center;">Agregar una oferta de empleo</h2>
+    
+      <form (ngSubmit)="onSubmit()" class="job-form">
+        <mat-form-field class="form-field">
+          <mat-label>Oferta</mat-label>
+          <input matInput placeholder="Nombre de la Oferta" name="name" [(ngModel)]="jobOffer!.name" required
+            color="primary">
+        </mat-form-field>
+        <mat-form-field class="form-field">
+          <mat-label>Salario</mat-label>
+          <input matInput type="number" placeholder="Salary" name="salary" [(ngModel)]="jobOffer!.salary" required>
+        </mat-form-field>
+
+        <div class="esco-selection">
+          <h2 mat-dialog-title style="text-align:center;">Conocimientos esenciales</h2>
+          <mat-chip-listbox aria-label="Tag list">
+            <mat-chip *ngFor="let tag of essentialSkillTags; let i = index" [ngStyle]="{'background-color': getColor(i)}">
+              {{tag}}
+              <mat-icon matChipRemove (click)="removeEssentialSkill(i)">cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+
+        <div class="esco-selection">
+          <h2 mat-dialog-title style="text-align:center;">Conocimientos deseados</h2>
+          <mat-chip-listbox aria-label="Tag list">
+            <mat-chip *ngFor="let tag of optionalSkillTags; let i = index" [ngStyle]="{'background-color': getColor(i)}">
+              {{tag}}
+              <mat-icon matChipRemove (click)="removeOptionalSkill(i)">cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+
+        <div class="esco-selection">
+          <h2 mat-dialog-title style="text-align:center;">Educación</h2>
+          <mat-chip-listbox aria-label="Tag list">
+            <mat-chip *ngFor="let tag of educationTags; let i = index" [ngStyle]="{'background-color': getColor(i)}">
+              {{tag}}
+              <mat-icon matChipRemove (click)="removeEducation(i)">cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+
+        <mat-checkbox class="checkbox" name="remote" [(ngModel)]="jobOffer!.remote">¿Trabajo Remoto?</mat-checkbox>
+    
+        <div class="buttons">
+          <button mat-raised-button color="primary" type="submit">Agregar</button>
+          <button mat-raised-button mat-dialog-close color="info">Cancelar</button>
+        </div>
+      </form>
+    
+      <form class="job-form">
+        <h3 mat-dialog-title style="text-align:center;">Consultar en base de datos RDF/SPARQL</h3>
+        <mat-form-field class="form-field w-90">
+          <mat-label>Seleccionar ocupación</mat-label>
+          <mat-select placeholder="Asocie su oferta a una ocupación ESCO" name="salary"
+            [(ngModel)]="jobOffer!.occupationName" required mat-select-search
+            (selectionChange)="getEssentialSkillsByOccupation($event)">
+            <mat-option *ngFor="let option of escoOptions" [value]="option.value">
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <div class="search-container">
+          <mat-form-field class="form-field w-90">
+            <mat-label>Buscar por etiquetas</mat-label>
+            <input matInput placeholder="Ingrese su búsqueda" #searchTermEtq>
+          </mat-form-field>
+          <button mat-icon-button color="accent" (click)="getOccupationByAlternativeLabel(searchTermEtq.value)">
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+    
+        <div class="search-container">
+          <mat-form-field class="form-field w-90">
+            <mat-label>Buscar habilidades relacionadas</mat-label>
+            <input matInput placeholder="Ingrese una habilidad" #searchTermRel>
+          </mat-form-field>
+          <button mat-icon-button color="accent" (click)="getRelatedSkillsBySkill(searchTermRel.value)">
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+    
+        <div class="search-container">
+          <mat-form-field class="form-field w-90">
+            <mat-label>Buscar ocupaciones por habilidad</mat-label>
+            <input matInput placeholder="Ingrese una habilidad" #searchTermHab>
+          </mat-form-field>
+          <button mat-icon-button color="accent" (click)="getRelatedOccupationsBySkill(searchTermHab.value)">
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+      </form>
+    </div>
+    <!-- Right column for bullet lists -->
+    <div fxFlex="55" class="ontology-data" fxLayout="column">
+
+
+      <div class="scrollable-card-home-content" *ngIf="skills.length == 0 && associatedSkills.length == 0  && relatedSkills.length == 0" fxFlex="100" fxLayoutAlign="center center" style="background:white;">
+        <img src="assets/banner.png" alt="Skills Image" style="width: 100%;height: 100%;">
+
+      </div>
+    
+      <div fxFlex="100" fxLayout="column" class="bullet-list-container">
+        <mat-card *ngIf="skills.length > 0 && associatedSkills.length > 0" style="border-radius:0px!important;">
+          <h3 style="color:white;padding-left:5px;">Ocupación: {{foundOccupationLabel}}</h3>
+        </mat-card>
+
+        <mat-card *ngIf="skills.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Habilidades Esenciales</h3>.
+            <mat-chip-listbox aria-label="Tag list">
+              <mat-chip *ngFor="let skill of skills; let i = index" (click)="addEssentialSkill(skill.name)">
+                {{skill.name}}
+              </mat-chip>
+            </mat-chip-listbox>
+          </mat-card-content>
+        </mat-card>
+      
+        <mat-card *ngIf="associatedSkills.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Habilidades Opcionales</h3>
+            <mat-chip-listbox aria-label="Tag list">
+              <mat-chip *ngFor="let associatedSkill of associatedSkills; let i = index" (click)="addOptionalSkill(associatedSkill.name)">
+                {{associatedSkill.name}}
+              </mat-chip>
+            </mat-chip-listbox>
+          </mat-card-content>
+        </mat-card>
+        
+        <mat-card *ngIf="qualifications.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Acreditaciones Necesarias</h3>
+            <mat-chip-listbox aria-label="Tag list">
+              <mat-chip *ngFor="let qualification of qualifications; let i = index" (click)="addEducation(qualification.name)">
+                {{qualification.name}}
+              </mat-chip>
+            </mat-chip-listbox>
+          </mat-card-content>
+        </mat-card>
+      
+        <mat-card *ngIf="skills.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Nivel de Educación</h3> 
+            <mat-chip-listbox aria-label="Tag list">
+              <mat-chip *ngFor="let level of iscedLevels; let i = index">
+                {{level.name}}
+              </mat-chip>
+            </mat-chip-listbox>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card *ngIf="associatedQualifications.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Acreditaciones Opcionales</h3>
+            <ul class="skill-list">
+              <li *ngFor="let associatedQualification of associatedQualifications">{{ associatedQualification.name }}</li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card *ngIf="workContexts.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Entornos laborales disponibles</h3>
+            <ul class="skill-list">
+              <li *ngFor="let workContext of workContexts">{{ workContext.name }}</li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card *ngIf="relatedSkills.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Habilidades relacionadas</h3>
+            <ul class="skill-list">
+              <li *ngFor="let skill of relatedSkills" (click)="addEssentialSkill(skill.name)">{{ skill.name }}</li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card *ngIf="relatedOccupations.length > 0" class="scrollable-card">
+          <mat-card-content>
+            <h3>Ocupaciones relacionadas</h3>
+            <ul class="skill-list">
+              <li *ngFor="let relatedOccupation of relatedOccupations">{{ relatedOccupation.name }}</li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+
+
+  </mat-dialog-content>

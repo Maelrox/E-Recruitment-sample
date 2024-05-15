@@ -1,0 +1,162 @@
+.job-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-field,
+.checkbox {
+  margin-bottom: 16px;
+  /* Adjust as needed */
+}
+
+.buttons {
+  margin-top: 16px;
+}
+
+.buttons button {
+  margin-right: 10px;
+}
+
+.bullet-list-container {
+  background: white;
+  color: #53156d;
+  text-decoration: none;
+  max-height: calc(70vh - 200px)!important;
+  overflow-y: scroll!important;
+}
+
+.job-form-container {
+  background: #2f2f2f;
+  overflow-y: scroll;
+}
+
+/* Custom scrollbar track */
+.job-form-container::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #f1f1f1; /* Light grey background */
+}
+
+/* Custom scrollbar handle */
+.job-form-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #888; /* Darker grey scrollbar handle */
+}
+
+/* Handle on hover */
+.job-form-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Even darker grey on hover */
+}
+
+/* Custom scrollbar width */
+.job-form-container::-webkit-scrollbar {
+  width: 8px; /* Adjust scrollbar width */
+}
+
+.ontology-data {
+  flex: 1 1 100%;
+  box-sizing: border-box;
+  max-width: 50%;
+  flex-direction: row;
+  display: flex;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  background:white;
+}
+
+.bullet-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between cards */
+  overflow: hidden;
+}
+
+.scrollable-card {
+  overflow-y: auto; /* Enables vertical scrolling if content overflows */
+  max-height: 200px; /* Adjust based on your needs */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Optional: Adds subtle shadow for depth */
+  background:white;
+  margin:15px;
+}
+
+.skill-list {
+  padding: 0;
+  margin: 0;
+  list-style: none; /* Removes bullet points */
+}
+
+.skill-list li {
+  padding: 8px 0; /* Adds some padding for each list item */
+  border-bottom: 1px solid #eee; /* Optional: Adds a line between items */
+}
+
+.skill-list li:last-child {
+  border-bottom: none; /* Removes border from the last item */
+}
+
+ul.skill-list {
+  color: #2b377b;
+}
+.scrollable-card-home-content h3 {
+  color: #2b377b;
+}
+
+.scrollable-card-home-content {
+  flex-direction: column!important;
+}
+
+.mat-mdc-card-content h3 {
+  background: #2b377b;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+.scrollable-card {
+  overflow-y: auto; /* Enables vertical scrolling if content overflows */
+  max-height: 200px; /* Adjust based on your needs */
+}
+
+/* Custom scrollbar track */
+.scrollable-card::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #f1f1f1; /* Light grey background */
+}
+
+/* Custom scrollbar handle */
+.scrollable-card::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #888; /* Darker grey scrollbar handle */
+}
+
+/* Handle on hover */
+.scrollable-card::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Even darker grey on hover */
+}
+
+/* Custom scrollbar width */
+.scrollable-card::-webkit-scrollbar {
+  width: 8px; /* Adjust scrollbar width */
+}
+
+
+@media only screen and (min-width: 1200px) {
+  .scrollable-card {
+    min-width: 43%;
+    min-height:300px;
+  }
+}
+
+@media only screen and (max-width: 1999px) {
+  .scrollable-card {
+    min-width: 95%;
+    min-height:200px;
+  }
+}
+.w-90 {
+  width:90%;
+}
+
+.search-container {
+  width:88%!important;
+}
+
